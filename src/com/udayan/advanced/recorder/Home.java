@@ -3,9 +3,13 @@ package com.udayan.advanced.recorder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
+import android.media.AudioRecord;
+import android.media.MediaRecorder.AudioSource;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -48,15 +52,15 @@ public class Home extends Activity {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-       
+
+		Constants.currentOutputStream = finalOutputStream;
+		
         Utility.setRecordingParams();
-        
+
         Constants.currentTempFileName1 = "bufferTemp";
-        
+
         setContentView(R.layout.activity_home);
-        
-        timedRecorder = new TimedRecorder(this, finalOutputStream);
-        
+
         Button recordButton = (Button) findViewById(R.id.buttonRec);
         recordButton.setOnClickListener(new View.OnClickListener() {
 			
@@ -64,20 +68,20 @@ public class Home extends Activity {
 			public void onClick(View v) {
 				if (isRecordingButton) {
 					((Button) v).setText("Stop");
-					timedRecorder.beginRecording();
+			    	Utility.isRecordingActive = true;
+			    	startService(new Intent(v.getContext(), TimedRecorder.class));
 					isRecordingButton = false;
 				}
 				else {
 					((Button) v).setText("Record");
 					((Button) v).setEnabled(false);
-					timedRecorder.stopRecording();
+			    	Utility.isRecordingActive = false;
+					stopService(new Intent(v.getContext(), TimedRecorder.class));
 					isRecordingButton = false;
 				}
 				
 			}
-		});
-        
-        
+		});        
     }
 
     @Override

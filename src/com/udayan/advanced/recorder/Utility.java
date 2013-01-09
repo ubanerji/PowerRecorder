@@ -29,7 +29,7 @@ public class Utility {
                         	else
                         		Constants.currentNumChannels = 2;
                         	
-                        	Constants.coreBufferSize = bufferSize * 4;
+                            Constants.coreBufferSize = bufferSize * 2;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
