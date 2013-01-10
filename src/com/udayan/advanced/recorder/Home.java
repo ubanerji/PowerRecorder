@@ -32,6 +32,8 @@ public class Home extends Activity {
         
         isRecordingButton = true;
         
+        timedRecorder = new TimedRecorder();
+        
         String state = Environment.getExternalStorageState();
 
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
@@ -69,14 +71,14 @@ public class Home extends Activity {
 				if (isRecordingButton) {
 					((Button) v).setText("Stop");
 			    	Utility.isRecordingActive = true;
-			    	startService(new Intent(v.getContext(), TimedRecorder.class));
+                    timedRecorder.beginRecording();
 					isRecordingButton = false;
 				}
 				else {
 					((Button) v).setText("Record");
 					((Button) v).setEnabled(false);
 			    	Utility.isRecordingActive = false;
-					stopService(new Intent(v.getContext(), TimedRecorder.class));
+					timedRecorder.stopRecording();
 					isRecordingButton = false;
 				}
 				
