@@ -17,19 +17,19 @@ public class TimedRecorder{
 	
 	public void beginRecording() {
 
-		this.os = Constants.currentOutputStream;
+		this.os = AppGlobals.currentOutputStream;
 		
-		Constants.homeContext.startService(new Intent(Constants.homeContext, RawRecorderService.class));
+		AppGlobals.homeContext.startService(new Intent(AppGlobals.homeContext, RawRecorderService.class));
         
 	}
 	
 	public void stopRecording(){
 		
-		Constants.homeContext.stopService(new Intent(Constants.homeContext, RawRecorderService.class));
+		AppGlobals.homeContext.stopService(new Intent(AppGlobals.homeContext, RawRecorderService.class));
 
 		FileInputStream bufferReadStream = null;
 		try {
-			bufferReadStream = Constants.homeContext.openFileInput(Constants.currentTempFileName1);
+			bufferReadStream = AppGlobals.homeContext.openFileInput(AppGlobals.currentTempFileName1);
 		} catch (FileNotFoundException e2) {
 			e2.printStackTrace();
 		}
@@ -39,12 +39,12 @@ public class TimedRecorder{
 	
     	try {
 			Utility.writeWaveFileHeader(os, bufferReadStream.getChannel().size(), bufferReadStream.getChannel().size() + 36, 
-					Constants.currentSampleRate, 2, Constants.currentSampleRate * 4);
+					AudioConfig.currentSampleRate, 2, AudioConfig.currentSampleRate * 4);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-    	byte[] bData = new byte[Constants.READ_BUFFER_SIZE];
+    	byte[] bData = new byte[AudioConfig.READ_BUFFER_SIZE];
     	
     	//Dump the rest of the bytes:
     	try {

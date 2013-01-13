@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import android.os.Bundle;
 import android.os.Environment;
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -25,7 +26,13 @@ public class Home extends Activity {
         
         super.onCreate(savedInstanceState);
         
-        Constants.homeContext = this;
+        /* Set Global state variables: */
+        
+        //Set the home context:
+        AppGlobals.homeContext = this;
+        //Set the notification manager:
+        AppGlobals.notifManager = 
+        		  (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         
         isRecordingButton = true;
         
@@ -52,11 +59,11 @@ public class Home extends Activity {
 			e.printStackTrace();
 		}
 
-		Constants.currentOutputStream = finalOutputStream;
+		AppGlobals.currentOutputStream = finalOutputStream;
 		
         Utility.setRecordingParams();
 
-        Constants.currentTempFileName1 = "bufferTemp";
+        AppGlobals.currentTempFileName1 = "bufferTemp";
 
         setContentView(R.layout.activity_home);
 

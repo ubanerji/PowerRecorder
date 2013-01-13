@@ -20,16 +20,16 @@ public class Utility {
 
                         if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
                             // check if we can instantiate and have a success
-                        	Constants.currentSampleRate = rate;
-                        	Constants.currentFormat = audioFormat;
-                        	Constants.currentChannelConfig = channelConfig;
+                        	AudioConfig.currentSampleRate = rate;
+                        	AudioConfig.currentFormat = audioFormat;
+                        	AudioConfig.currentChannelConfig = channelConfig;
                         	
-                        	if (Constants.currentChannelConfig == AudioFormat.CHANNEL_IN_MONO)
-                        		Constants.currentNumChannels = 1;
+                        	if (AudioConfig.currentChannelConfig == AudioFormat.CHANNEL_IN_MONO)
+                        		AudioConfig.currentNumChannels = 1;
                         	else
-                        		Constants.currentNumChannels = 2;
+                        		AudioConfig.currentNumChannels = 2;
                         	
-                            Constants.coreBufferSize = bufferSize * 2;
+                        	AudioConfig.coreBufferSize = bufferSize * 2;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

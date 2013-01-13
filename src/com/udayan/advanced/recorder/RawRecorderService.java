@@ -4,6 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.app.Notification;
+import android.app.Notification.Builder;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -17,33 +20,46 @@ public class RawRecorderService extends Service {
 
     private FileOutputStream bufferDumpStream;
 
-    private byte[] bData = new byte[Constants.READ_BUFFER_SIZE];
+    private byte[] bData = new byte[AudioConfig.READ_BUFFER_SIZE];
 
+    Intent intent = new Intent(AppGlobals.homeContext, Home.class);
+    PendingIntent pendingIntent = PendingIntent.getActivity(AppGlobals.homeContext, 0, intent, 0);
+    
+    Notification.Builder notifBuilder = new Notification.Builder(AppGlobals.homeContext)
+    		.setContentTitle("PowerRecorder recording active")
+    		.setContentText("Recording since ")
+    		.setContentIntent(pendingIntent);
+    
+    Notification notif = notifBuilder.getNotification();
+    
+    
     @Override
 	public void onCreate() {
 		super.onCreate();
+		notif.icon = R.drawable.ic_launcher;
+		AppGlobals.notifManager.notify(0, notif);
 		beginRecording();
 	}
 	
 	public void beginRecording() {
 
-		Constants.aRecorder = new AudioRecord(AudioSource.MIC, Constants.currentSampleRate, Constants.currentChannelConfig, Constants.currentFormat, Constants.coreBufferSize);
+		AppGlobals.aRecorder = new AudioRecord(AudioSource.MIC, AudioConfig.currentSampleRate, AudioConfig.currentChannelConfig, AudioConfig.currentFormat, AudioConfig.coreBufferSize);
 
-        if (Constants.aRecorder.getState() == AudioRecord.STATE_UNINITIALIZED) {
-        	Toast.makeText(Constants.homeContext, "Could not initialize audio record", Toast.LENGTH_LONG).show();
+        if (AppGlobals.aRecorder.getState() == AudioRecord.STATE_UNINITIALIZED) {
+        	Toast.makeText(AppGlobals.homeContext, "Could not initialize audio record", Toast.LENGTH_LONG).show();
         }
         else {
-        	Toast.makeText(Constants.homeContext, "Audio successfully initialized", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(AppGlobals.homeContext, "Audio successfully initialized", Toast.LENGTH_SHORT).show();
         }
 
 
         new Thread(new Runnable() {
     		public void run() {
-    			Constants.aRecorder.startRecording();
+    			AppGlobals.aRecorder.startRecording();
 	        	
 	        	bufferDumpStream = null;
 	    		try {
-	    			bufferDumpStream = Constants.homeContext.openFileOutput(Constants.currentTempFileName1, Context.MODE_PRIVATE);
+	    			bufferDumpStream = AppGlobals.homeContext.openFileOutput(AppGlobals.currentTempFileName1, Context.MODE_PRIVATE);
 	    		} catch (FileNotFoundException e2) {
 	    			e2.printStackTrace();
 	    		}
@@ -52,10 +68,10 @@ public class RawRecorderService extends Service {
 	            int bytesRead;
 	    		    	
 	        	do {
-	                bytesRead = Constants.aRecorder.read(bData, offset, Constants.coreBufferSize);
+	                bytesRead = AppGlobals.aRecorder.read(bData, offset, AudioConfig.coreBufferSize);
 	        	    	                
 	                if (bytesRead < 0) {
-	                	Log.e("Hello", "Breaking bad " + Constants.coreBufferSize);
+	                	Log.e("Hello", "Breaking bad " + AudioConfig.coreBufferSize);
 	                	break;
 	                }
 	                	
@@ -72,7 +88,7 @@ public class RawRecorderService extends Service {
 
 	        	Log.e("Hello", "Exiting tight loop");
 	        	
-	        	Constants.aRecorder.stop();
+	        	AppGlobals.aRecorder.stop();
     		}
     	}).start();
         
@@ -80,7 +96,7 @@ public class RawRecorderService extends Service {
 	}
 	
 	public void stopRecording(){
-		
+		AppGlobals.notifManager.cancelAll();
 		
 	}
 
