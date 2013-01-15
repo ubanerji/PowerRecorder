@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 public class Home extends Activity {
 
-	TimedRecorder timedRecorder;
+	CoreRecorder coreRecorder;
 	
     String mFileName;
     
@@ -36,7 +36,7 @@ public class Home extends Activity {
         
         isRecordingButton = true;
         
-        timedRecorder = new TimedRecorder();
+        coreRecorder = CoreRecorder.getInstance();
         
         String state = Environment.getExternalStorageState();
 
@@ -74,15 +74,13 @@ public class Home extends Activity {
 			public void onClick(View v) {
 				if (isRecordingButton) {
 					((Button) v).setText("Stop");
-			    	Utility.isRecordingActive = true;
-                    timedRecorder.beginRecording();
+                    coreRecorder.begin();
 					isRecordingButton = false;
 				}
 				else {
 					((Button) v).setText("Record");
 					((Button) v).setEnabled(false);
-			    	Utility.isRecordingActive = false;
-					timedRecorder.stopRecording();
+					coreRecorder.stop();
 					isRecordingButton = false;
 				}
 				
